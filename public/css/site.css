@@ -2194,9 +2194,12 @@ main + .site-footer {
   gap: var(--s-4);
   grid-template-columns: repeat(2, 1fr);
 }
+/* Fixed-width cards on larger screens so photos stay a consistent size. */
 @media (min-width: 760px) {
   .leader-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, 200px);
+    justify-content: center;
+    gap: var(--s-5);
   }
 }
 .leader-card,
@@ -2239,8 +2242,14 @@ main + .site-footer {
 }
 .vp-grid {
   display: grid;
-  gap: var(--s-5);
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--s-4);
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 760px) {
+  .vp-grid {
+    grid-template-columns: repeat(auto-fill, 220px);
+    gap: var(--s-5);
+  }
 }
 .vp-card h3 {
   margin-top: 0;
