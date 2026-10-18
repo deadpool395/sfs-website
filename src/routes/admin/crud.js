@@ -44,9 +44,12 @@ function crud(cfg) {
           values[f.name] = v ? new Date(v) : f.required ? new Date() : null;
           break;
         }
-        case 'select':
-          values[f.name] = f.options.includes(raw) ? raw : f.options[0];
+        case 'select': {
+          // Options may be plain strings or { value, label } objects.
+          const opts = f.options.map((o) => (typeof o === 'object' ? o.value : o));
+          values[f.name] = opts.includes(raw) ? raw : opts[0];
           break;
+        }
         case 'image':
         case 'pdf':
           break;

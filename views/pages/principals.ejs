@@ -4,7 +4,7 @@
 
 <section class="section">
   <div class="container">
-    <% if (!current.length && !past.length) { %>
+    <% if (!current.length && !vicePrincipals.length && !past.length) { %>
       <div class="empty"><%- icon('user') %><p>Principal profiles will be added soon.</p></div>
     <% } %>
 
@@ -25,6 +25,33 @@
         </div>
       </article>
     <% }) %>
+
+    <% if (vicePrincipals.length) { %>
+      <div class="section-head reveal" style="margin-top: var(--s-8)">
+        <div>
+          <span class="eyebrow">Supporting leadership</span>
+          <h2><%= vicePrincipals.length > 1 ? 'Vice Principals' : 'Vice Principal' %></h2>
+        </div>
+      </div>
+      <div class="vp-grid">
+        <% vicePrincipals.forEach((p) => { %>
+          <article class="vp-card reveal">
+            <div class="portrait">
+              <% if (p.media_id) { %>
+                <img src="<%= mediaUrl(p.media_id, 'thumb') %>" alt="<%= p.name %>" loading="lazy">
+              <% } else { %>
+                <span class="placeholder"><%= initials(p.name) %></span>
+              <% } %>
+            </div>
+            <div class="info">
+              <h3><%= p.name %></h3>
+              <div class="role"><%= p.designation || 'Vice Principal' %><% if (p.tenure_from) { %> · Since <%= p.tenure_from %><% } %></div>
+              <% if (p.bio) { %><p><%= p.bio %></p><% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
 
     <% if (past.length) { %>
       <div class="section-head reveal" style="margin-top: var(--s-8)">

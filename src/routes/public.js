@@ -34,12 +34,14 @@ router.use(async (req, res, next) => {
 });
 
 router.get('/', async (req, res) => {
-  const [videos, slides, notices, principal, gallery] = await Promise.all([
+  const [videos, slides, notices, principal, gallery, manager, leadership] = await Promise.all([
     pool.query('SELECT * FROM hero_videos WHERE visible ORDER BY sort, id'),
     pool.query('SELECT * FROM slides WHERE visible AND media_id IS NOT NULL ORDER BY sort, id'),
     pool.query(`SELECT * FROM notifications WHERE ${ACTIVE_NOTICES} ORDER BY pinned DESC, published_at DESC LIMIT 4`),
-    pool.query('SELECT * FROM principals WHERE is_current ORDER BY sort, id LIMIT 1'),
+    pool.query("SELECT * FROM principals WHERE role = 'principal' AND is_current AND visible ORDER BY sort, id LIMIT 1"),
     pool.query('SELECT * FROM gallery_images WHERE visible AND media_id IS NOT NULL ORDER BY created_at DESC LIMIT 8'),
+    pool.query("SELECT * FROM principals WHERE role = 'manager' AND is_current AND visible ORDER BY sort, id LIMIT 1"),
+    pool.query('SELECT * FROM principals WHERE is_current AND visible AND show_on_home ORDER BY sort, id'),
   ]);
   const background = videos.rows.find((v) => v.is_background) || null;
   res.render('pages/home', {
@@ -50,6 +52,8 @@ router.get('/', async (req, res) => {
     notices: notices.rows,
     principal: principal.rows[0] || null,
     gallery: gallery.rows,
+    manager: manager.rows[0] || null,
+    leadership: leadership.rows,
   });
 });
 
@@ -77,11 +81,15 @@ router.get('/academic-calendar', async (req, res) => {
 });
 
 router.get('/principals', async (req, res) => {
-  const { rows } = await pool.query('SELECT * FROM principals ORDER BY is_current DESC, sort, id');
+  const { rows } = await pool.query(
+    "SELECT * FROM principals WHERE visible AND role IN ('principal', 'vice_principal') ORDER BY sort, id"
+  );
+  const principals = rows.filter((p) => p.role === 'principal');
   res.render('pages/principals', {
     title: "Principal's Corner",
-    current: rows.filter((p) => p.is_current),
-    past: rows.filter((p) => !p.is_current),
+    current: principals.filter((p) => p.is_current),
+    vicePrincipals: rows.filter((p) => p.role === 'vice_principal' && p.is_current),
+    past: principals.filter((p) => !p.is_current),
   });
 });
 

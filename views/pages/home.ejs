@@ -105,6 +105,33 @@
 </section>
 <% } %>
 
+<% if (manager) { const managerText = manager.message || manager.bio; %>
+<section class="section" aria-labelledby="manager-title">
+  <div class="container">
+    <article class="manager-feature reveal">
+      <div class="manager-portrait">
+        <% if (manager.media_id) { %>
+          <img src="<%= mediaUrl(manager.media_id) %>" alt="<%= manager.name %>" loading="lazy">
+        <% } else { %>
+          <span class="placeholder"><%= initials(manager.name) %></span>
+        <% } %>
+        <div class="media-tint"></div>
+        <div class="media-fade"></div>
+      </div>
+      <div class="manager-body">
+        <span class="eyebrow">Manager's message</span>
+        <h2 id="manager-title">From the Manager's desk</h2>
+        <% if (managerText) { %><blockquote><%= managerText %></blockquote><% } %>
+        <div class="manager-sign">
+          <strong><%= manager.name %></strong>
+          <span><%= manager.designation || 'School Manager' %></span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+<% } %>
+
 <section class="section" aria-labelledby="notices-title">
   <div class="container split">
     <div class="reveal">
@@ -133,7 +160,7 @@
     <aside class="panel principal-card reveal" aria-label="Message from the principal">
       <span class="eyebrow">Principal's message</span>
       <h2><%= pm.heading || "From the Principal's desk" %></h2>
-      <blockquote><%= pm.body || (principal && principal.bio) || 'At St. Francis School we nurture every child to grow in knowledge, character and compassion — living out our motto of Peace, Love and Service each day.' %></blockquote>
+      <blockquote><%= (principal && principal.message) || pm.body || (principal && principal.bio) || 'At St. Francis School we nurture every child to grow in knowledge, character and compassion — living out our motto of Peace, Love and Service each day.' %></blockquote>
       <% if (principal) { %>
         <div class="principal-sign">
           <% if (principal.media_id) { %>
@@ -165,6 +192,40 @@
           <img src="<%= mediaUrl(g.media_id, i === 0 ? null : 'thumb') %>" alt="<%= g.caption %>" loading="lazy">
           <div class="media-tint"></div>
         </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (leadership.length) {
+  const roleLabel = { manager: 'Manager', principal: 'Principal', vice_principal: 'Vice Principal' };
+%>
+<section class="section" aria-labelledby="leadership-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Our leadership</span>
+        <h2 id="leadership-title">Guiding our school community</h2>
+      </div>
+      <a class="link-arrow" href="/principals">Principal's Corner <%- icon('arrow') %></a>
+    </div>
+    <div class="leader-grid">
+      <% leadership.forEach((p) => { %>
+        <article class="leader-card reveal">
+          <div class="portrait">
+            <% if (p.media_id) { %>
+              <img src="<%= mediaUrl(p.media_id, 'thumb') %>" alt="<%= p.name %>" loading="lazy">
+            <% } else { %>
+              <span class="placeholder"><%= initials(p.name) %></span>
+            <% } %>
+          </div>
+          <div class="info">
+            <span class="tag <%= p.role === 'manager' ? 'tag-gold' : p.role === 'vice_principal' ? 'tag-royal' : '' %>"><%= roleLabel[p.role] %></span>
+            <h3><%= p.name %></h3>
+            <% if (p.designation && p.designation !== roleLabel[p.role]) { %><p><%= p.designation %></p><% } %>
+          </div>
+        </article>
       <% }) %>
     </div>
   </div>

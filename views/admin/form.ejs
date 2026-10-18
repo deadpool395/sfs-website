@@ -40,7 +40,7 @@
           <% if (f.type === 'textarea') { %>
             <textarea id="<%= id %>" name="<%= f.name %>" <% if (f.required) { %>required<% } %>><%= v || '' %></textarea>
           <% } else if (f.type === 'select') { %>
-            <select id="<%= id %>" name="<%= f.name %>"><% f.options.forEach((o) => { %><option <% if (o === v) { %>selected<% } %>><%= o %></option><% }) %></select>
+            <select id="<%= id %>" name="<%= f.name %>"><% f.options.forEach((o) => { const ov = typeof o === 'object' ? o.value : o; const ol = typeof o === 'object' ? o.label : o; %><option value="<%= ov %>" <% if (ov === v) { %>selected<% } %>><%= ol %></option><% }) %></select>
           <% } else if (f.type === 'datetime') { %>
             <input id="<%= id %>" name="<%= f.name %>" type="datetime-local" value="<%= v ? toInputDate(v) : (f.required ? toInputDate(new Date()) : '') %>" <% if (f.required) { %>required<% } %>>
           <% } else if (f.type === 'number') { %>

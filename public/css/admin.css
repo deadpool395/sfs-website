@@ -749,3 +749,8 @@ td.num {
     display: none;
   }
 }
+
+.badge-role {
+  background: var(--crimson-tint);
+  color: var(--crimson);
+}

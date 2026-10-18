@@ -7,7 +7,7 @@ const CATEGORIES = [
   { table: 'slides', label: 'Slideshow' },
   { table: 'notifications', label: 'Notifications' },
   { table: 'calendars', label: 'Academic calendars (PDF)' },
-  { table: 'principals', label: 'Principals' },
+  { table: 'principals', label: 'Leadership' },
   { table: 'staff', label: 'Teachers & staff' },
 ];
 

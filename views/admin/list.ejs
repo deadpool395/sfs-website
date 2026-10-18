@@ -2,7 +2,7 @@
 <%
   const L = cfg.list;
   const toggleField = cfg.toggleField || 'visible';
-  const badgeLabels = { is_background: 'Background', pinned: 'Pinned', is_current: 'Current' };
+  const badgeLabels = { is_background: 'Background', pinned: 'Pinned', is_current: 'Current', show_on_home: 'On home page' };
 %>
 <div class="page-head">
   <div>
@@ -53,11 +53,12 @@
         <div style="min-width:0">
           <strong>
             <%= r[L.primary] || '(untitled)' %>
+            <% if (L.label && r[L.label.field]) { %><span class="badge badge-role"><%= L.label.values[r[L.label.field]] || r[L.label.field] %></span><% } %>
             <% (L.badges || []).forEach((b) => { if (r[b]) { %><span class="badge"><%= badgeLabels[b] %></span><% } }) %>
             <% if (hidden) { %><span class="badge badge-muted">Hidden</span><% } %>
           </strong>
           <div class="sub">
-            <%= [r[L.secondary], L.tertiary ? r[L.tertiary] : null, L.date ? fmtDate(r[L.date]) : null].filter(Boolean).join(' · ') %>
+            <%= [r[L.secondary], L.tertiary ? r[L.tertiary] : null, L.date ? fmtDate(r[L.date]) : null, L.showSort ? `Order ${r.sort}` : null].filter(Boolean).join(' · ') %>
           </div>
         </div>
         <div class="actions">
