@@ -1,0 +1,40 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/page-hero', { eyebrow: 'Contact', heading: "We'd love to hear from you", intro: 'Reach out to the school office for admissions, enquiries or visits.' }) %>
+
+<section class="section">
+  <div class="container contact-grid">
+    <div class="contact-list">
+      <% if (contact.address) { %>
+        <div class="contact-item reveal"><span class="qi"><%- icon('map') %></span><div><h3>Address</h3><p><%= contact.address %></p></div></div>
+      <% } %>
+      <% if (contact.phones) { %>
+        <div class="contact-item reveal"><span class="qi"><%- icon('phone') %></span><div><h3>Phone</h3><p><% contact.phones.split(/[,\n]/).map((p) => p.trim()).filter(Boolean).forEach((p, i) => { %><%- i ? '<br>' : '' %><a href="tel:<%= p.replace(/[^\d+]/g, '') %>"><%= p %></a><% }) %></p></div></div>
+      <% } %>
+      <% if (contact.emails) { %>
+        <div class="contact-item reveal"><span class="qi"><%- icon('mail') %></span><div><h3>Email</h3><p><% contact.emails.split(/[,\n]/).map((e) => e.trim()).filter(Boolean).forEach((e, i) => { %><%- i ? '<br>' : '' %><a href="mailto:<%= e %>"><%= e %></a><% }) %></p></div></div>
+      <% } %>
+      <% if (contact.hours) { %>
+        <div class="contact-item reveal"><span class="qi"><%- icon('clock') %></span><div><h3>Office hours</h3><p><%= contact.hours %></p></div></div>
+      <% } %>
+      <% if (contact.facebook || contact.instagram || contact.youtube) { %>
+        <div class="contact-item reveal"><span class="qi"><%- icon('globe') %></span><div><h3>Follow us</h3>
+          <div class="socials">
+            <% if (contact.facebook) { %><a class="icon-btn" href="<%= contact.facebook %>" target="_blank" rel="noopener" aria-label="Facebook"><%- icon('facebook') %></a><% } %>
+            <% if (contact.instagram) { %><a class="icon-btn" href="<%= contact.instagram %>" target="_blank" rel="noopener" aria-label="Instagram"><%- icon('instagram') %></a><% } %>
+            <% if (contact.youtube) { %><a class="icon-btn" href="<%= contact.youtube %>" target="_blank" rel="noopener" aria-label="YouTube"><%- icon('youtube') %></a><% } %>
+          </div>
+        </div></div>
+      <% } %>
+    </div>
+    <div class="map-frame reveal">
+      <% if (contact.map_embed) { %>
+        <iframe src="<%= contact.map_embed %>" title="Map to <%= schoolName %>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <% } else { %>
+        <div class="empty" style="border:0;height:100%;display:grid;place-items:center"><div><%- icon('map') %><p>Map coming soon.</p></div></div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

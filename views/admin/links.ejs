@@ -1,0 +1,31 @@
+<%- include('_top') %>
+<% const desc = { parent_login: 'Parent ERP sign-in (header button)', staff_login: 'Staff ERP sign-in (header button)', fee_payment: 'Online fee payment (header button)', academic_calendar: 'Academic calendar (menu & home page)' }; %>
+<div class="page-head">
+  <div>
+    <h1>Buttons & links</h1>
+    <p>Change the text, link and visibility of the sign-in, fee payment and calendar buttons.</p>
+  </div>
+</div>
+<form method="post" action="/admin/links">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <% links.forEach((l) => { %>
+    <section class="card">
+      <h2><%= desc[l.key] || l.label %></h2>
+      <div class="form">
+        <label class="check"><input type="checkbox" name="visible_<%= l.id %>" <% if (l.visible) { %>checked<% } %>> Show this button</label>
+        <div class="form-row">
+          <div class="field">
+            <label for="label_<%= l.id %>">Button text</label>
+            <input id="label_<%= l.id %>" name="label_<%= l.id %>" type="text" value="<%= l.label %>" required>
+          </div>
+          <div class="field">
+            <label for="url_<%= l.id %>">Link</label>
+            <input id="url_<%= l.id %>" name="url_<%= l.id %>" type="text" value="<%= l.url %>" required>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% }) %>
+  <div class="form-actions"><button class="btn" type="submit">Save buttons</button></div>
+</form>
+<%- include('_bottom') %>

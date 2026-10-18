@@ -1,0 +1,41 @@
+<%
+  // Donut: sfsapp data, website data, free space.
+  const u = storage;
+  const R = 70, C = 2 * Math.PI * R;
+  const segs = [
+    { v: u.otherBytes, color: '#7a7f91', label: 'School app data (sfsapp)' },
+    { v: u.websiteBytes, color: '#1b5fb8', label: 'Website (photos, PDFs, content)' },
+  ];
+  let offset = 0;
+  const statusLabel = { ok: 'Healthy', warning: 'Getting full', critical: 'Almost full' }[u.level];
+%>
+<section class="card">
+  <div class="storage-hero">
+    <svg class="donut" viewBox="0 0 180 180" role="img" aria-label="<%= u.pct.toFixed(1) %>% of storage used">
+      <circle cx="90" cy="90" r="<%= R %>" fill="none" stroke="rgba(26,30,44,.08)" stroke-width="22"/>
+      <% segs.forEach((s) => { const len = Math.max(0, Math.min(1, s.v / u.limitBytes)) * C; %>
+        <circle cx="90" cy="90" r="<%= R %>" fill="none" stroke="<%= s.color %>" stroke-width="22"
+          stroke-dasharray="<%= len.toFixed(2) %> <%= (C - len).toFixed(2) %>" stroke-dashoffset="<%= (-offset).toFixed(2) %>"
+          transform="rotate(-90 90 90)"/>
+      <% offset += len; }) %>
+      <text x="90" y="88" text-anchor="middle" font-size="30" font-weight="600" fill="<%= u.level === 'critical' ? '#c8141b' : u.level === 'warning' ? '#c27c0e' : '#1a1e2c' %>"><%= u.pct.toFixed(u.pct < 10 ? 1 : 0) %>%</text>
+      <text x="90" y="110" text-anchor="middle" font-size="12" fill="#7a7f91" font-family="Montserrat, sans-serif">used</text>
+    </svg>
+    <div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap: var(--s-3); margin-bottom: var(--s-3)">
+        <h2 style="margin:0">Database storage</h2>
+        <span class="status-pill status-<%= u.level %>"><%= statusLabel %></span>
+      </div>
+      <div class="meter <%= u.level %>" aria-hidden="true"><span style="transform: scaleX(<%= Math.max(0.005, u.pct / 100) %>)"></span></div>
+      <div class="storage-figures">
+        <div><b><%= formatBytes(u.usedBytes) %></b><span>Used</span></div>
+        <div><b><%= formatBytes(u.freeBytes) %></b><span>Free</span></div>
+        <div><b><%= formatBytes(u.limitBytes) %></b><span>Total limit</span></div>
+      </div>
+      <p style="margin: var(--s-4) 0 0; font-size:.85rem; color: var(--ink-soft)">
+        <% segs.forEach((s) => { %><span style="margin-right: var(--s-4)"><span class="legend" style="background:<%= s.color %>"></span><%= s.label %>: <b><%= formatBytes(s.v) %></b></span><% }) %>
+      </p>
+      <% if (typeof showLink !== 'undefined' && showLink) { %><p style="margin: var(--s-3) 0 0"><a href="/admin/storage">See what's using space →</a></p><% } %>
+    </div>
+  </div>
+</section>

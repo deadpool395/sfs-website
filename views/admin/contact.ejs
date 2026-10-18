@@ -1,0 +1,45 @@
+<%- include('_top') %>
+<div class="page-head">
+  <div>
+    <h1>Contact page</h1>
+    <p>These details appear on the Contact page and in the footer.</p>
+  </div>
+</div>
+<section class="card">
+  <form class="form" method="post" action="/admin/contact">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="field">
+      <label for="address">Address</label>
+      <textarea id="address" name="address" style="min-height:90px"><%= c.address || '' %></textarea>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="phones">Phone numbers</label>
+        <textarea id="phones" name="phones" style="min-height:70px"><%= c.phones || '' %></textarea>
+        <div class="help">One per line or separated by commas.</div>
+      </div>
+      <div class="field">
+        <label for="emails">Email addresses</label>
+        <textarea id="emails" name="emails" style="min-height:70px"><%= c.emails || '' %></textarea>
+        <div class="help">One per line or separated by commas.</div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="hours">Office hours</label>
+      <input id="hours" name="hours" type="text" value="<%= c.hours || '' %>">
+    </div>
+    <div class="field">
+      <label for="map_embed">Google Map</label>
+      <textarea id="map_embed" name="map_embed" style="min-height:70px" placeholder='<iframe src="https://www.google.com/maps/embed?pb=…"></iframe>'><%= c.map_embed || '' %></textarea>
+      <div class="help">In Google Maps: Share → Embed a map → Copy HTML, then paste it here.</div>
+    </div>
+    <h2 style="margin-top: var(--s-3)">Social media</h2>
+    <div class="form-row">
+      <div class="field"><label for="facebook">Facebook</label><input id="facebook" name="facebook" type="text" value="<%= c.facebook || '' %>" placeholder="https://facebook.com/…"></div>
+      <div class="field"><label for="instagram">Instagram</label><input id="instagram" name="instagram" type="text" value="<%= c.instagram || '' %>" placeholder="https://instagram.com/…"></div>
+    </div>
+    <div class="field"><label for="youtube">YouTube channel</label><input id="youtube" name="youtube" type="text" value="<%= c.youtube || '' %>" placeholder="https://youtube.com/@…"></div>
+    <div class="form-actions"><button class="btn" type="submit">Save contact details</button></div>
+  </form>
+</section>
+<%- include('_bottom') %>

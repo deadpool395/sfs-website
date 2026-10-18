@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Admin sign in · <%= schoolName %></title>
+  <link rel="icon" type="image/png" href="/img/logo-mark.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <img src="/img/logo-mark.png" alt="<%= schoolName %> crest">
+    <h1>Admin sign in</h1>
+    <p style="color: var(--ink-mute)"><%= schoolName %></p>
+    <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+    <form class="form" method="post" action="/admin/login">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" type="submit">Sign in</button>
+      <a href="/" style="text-align:center; font-size:.9rem">← Back to website</a>
+    </form>
+  </main>
+</body>
+</html>

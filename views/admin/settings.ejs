@@ -1,0 +1,46 @@
+<%- include('_top') %>
+<% const hero = s.hero || {}; const pm = s.principal_message || {}; %>
+<div class="page-head">
+  <div>
+    <h1>School & home page text</h1>
+    <p>The school name appears in the header, footer, page titles and search results.</p>
+  </div>
+</div>
+<section class="card">
+  <form class="form" method="post" action="/admin/settings">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <h2>School</h2>
+    <div class="field">
+      <label for="school_name">School name *</label>
+      <input id="school_name" name="school_name" type="text" value="<%= s.school_name || '' %>" required>
+    </div>
+    <div class="field">
+      <label for="tagline">Motto / tagline</label>
+      <input id="tagline" name="tagline" type="text" value="<%= s.tagline || '' %>">
+    </div>
+
+    <h2 style="margin-top: var(--s-4)">Home page banner</h2>
+    <div class="field">
+      <label for="hero_heading">Heading</label>
+      <input id="hero_heading" name="hero_heading" type="text" value="<%= hero.heading || '' %>">
+      <div class="help">Wrap words in *asterisks* to highlight them in gold italics.</div>
+    </div>
+    <div class="field">
+      <label for="hero_subheading">Sub-heading</label>
+      <textarea id="hero_subheading" name="hero_subheading" style="min-height:80px"><%= hero.subheading || '' %></textarea>
+    </div>
+
+    <h2 style="margin-top: var(--s-4)">Principal's message (home page)</h2>
+    <div class="field">
+      <label for="pm_heading">Heading</label>
+      <input id="pm_heading" name="pm_heading" type="text" value="<%= pm.heading || '' %>">
+    </div>
+    <div class="field">
+      <label for="pm_body">Message</label>
+      <textarea id="pm_body" name="pm_body"><%= pm.body || '' %></textarea>
+      <div class="help">Leave blank to use the current principal's biography.</div>
+    </div>
+    <div class="form-actions"><button class="btn" type="submit">Save settings</button></div>
+  </form>
+</section>
+<%- include('_bottom') %>

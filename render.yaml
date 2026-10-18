@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: sfs-website
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TZ
+        value: Asia/Kolkata
+      - key: DATABASE_URL
+        sync: false # paste the INTERNAL connection string of the sfsapp database
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DB_STORAGE_LIMIT_MB
+        value: "1024" # match your Render Postgres plan; can also be changed in Admin → Storage

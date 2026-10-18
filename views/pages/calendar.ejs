@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/page-hero', { eyebrow: 'Academic calendar', heading: selected ? (selected.title + (selected.academic_year ? ' ' + selected.academic_year : '')) : 'Academic Calendar', intro: 'Turn the pages to explore the school year — drag a corner, tap the edges or use your arrow keys.' }) %>
+
+<section class="section">
+  <div class="container">
+    <% if (!selected) { %>
+      <div class="empty"><%- icon('calendar') %><p>The academic calendar will be published here soon.</p></div>
+    <% } else { %>
+      <% if (calendars.length > 1) { %>
+        <nav class="calendar-tabs" aria-label="Choose calendar">
+          <% calendars.forEach((c) => { %>
+            <a class="chip" href="/academic-calendar?id=<%= c.id %>" aria-pressed="<%= c.id === selected.id %>"><%= c.title %><%= c.academic_year ? ' · ' + c.academic_year : '' %></a>
+          <% }) %>
+        </nav>
+      <% } %>
+
+      <div class="book-stage" data-book data-pdf="<%= mediaUrl(selected.media_id) %>">
+        <div class="flipbook-wrap">
+          <div class="book-loading" data-book-loading>
+            <div>
+              <%- icon('book') %>
+              <p style="margin: var(--s-2) 0">Preparing your book…</p>
+              <div class="bar"><span data-book-progress></span></div>
+            </div>
+          </div>
+          <div id="flipbook" hidden></div>
+        </div>
+        <div class="book-controls" data-book-controls hidden>
+          <button class="icon-btn" type="button" data-book-prev aria-label="Previous page"><%- icon('chevronLeft') %></button>
+          <span class="page-indicator" data-book-page aria-live="polite">Page 1</span>
+          <button class="icon-btn" type="button" data-book-next aria-label="Next page"><%- icon('chevronRight') %></button>
+          <button class="icon-btn" type="button" data-book-sound aria-pressed="true" aria-label="Page-turn sound"><%- icon('volume') %></button>
+          <button class="icon-btn" type="button" data-book-fullscreen aria-label="Full screen"><%- icon('fullscreen') %></button>
+          <a class="icon-btn" href="<%= mediaUrl(selected.media_id) %>?download=1" aria-label="Download PDF"><%- icon('download') %></a>
+        </div>
+      </div>
+      <p style="margin-top: var(--s-4); text-align:center; color: var(--ink-mute); font-size:.9rem">
+        Having trouble viewing? <a href="<%= mediaUrl(selected.media_id) %>" target="_blank" rel="noopener">Open the PDF directly</a>.
+      </p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer', selected ? { extraJs: ['/vendor/page-flip/page-flip.browser.js'], extraModules: ['/js/flipbook.js'] } : {}) %>

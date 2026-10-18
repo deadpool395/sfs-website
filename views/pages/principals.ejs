@@ -1,0 +1,57 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/page-hero', { eyebrow: "Principal's Corner", heading: 'Leadership through the years', intro: 'The principals who have guided our school community with vision, care and dedication.' }) %>
+
+<section class="section">
+  <div class="container">
+    <% if (!current.length && !past.length) { %>
+      <div class="empty"><%- icon('user') %><p>Principal profiles will be added soon.</p></div>
+    <% } %>
+
+    <% current.forEach((p) => { %>
+      <article class="principal-feature reveal">
+        <div class="portrait">
+          <% if (p.media_id) { %>
+            <img src="<%= mediaUrl(p.media_id) %>" alt="<%= p.name %>">
+          <% } else { %>
+            <span class="placeholder"><%= initials(p.name) %></span>
+          <% } %>
+        </div>
+        <div>
+          <span class="eyebrow">Current principal</span>
+          <h2><%= p.name %></h2>
+          <div class="role"><%= p.designation %><% if (p.tenure_from) { %> · Since <%= p.tenure_from %><% } %></div>
+          <% if (p.bio) { %><div class="bio"><%= p.bio %></div><% } %>
+        </div>
+      </article>
+    <% }) %>
+
+    <% if (past.length) { %>
+      <div class="section-head reveal" style="margin-top: var(--s-8)">
+        <div>
+          <span class="eyebrow">Our legacy</span>
+          <h2>Past principals</h2>
+        </div>
+      </div>
+      <div class="timeline">
+        <% past.forEach((p) => { %>
+          <article class="timeline-item reveal">
+            <% if (p.media_id) { %>
+              <img src="<%= mediaUrl(p.media_id, 'thumb') %>" alt="<%= p.name %>" loading="lazy">
+            <% } else { %>
+              <span class="avatar-fallback"><%= initials(p.name) %></span>
+            <% } %>
+            <div>
+              <% if (p.tenure_from || p.tenure_to) { %><div class="years"><%= p.tenure_from %><%= p.tenure_from || p.tenure_to ? ' – ' : '' %><%= p.tenure_to || 'present' %></div><% } %>
+              <h3><%= p.name %></h3>
+              <% if (p.designation && p.designation !== 'Principal') { %><p><%= p.designation %></p><% } %>
+              <% if (p.bio) { %><p><%= p.bio.length > 220 ? p.bio.slice(0, 220) + '…' : p.bio %></p><% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

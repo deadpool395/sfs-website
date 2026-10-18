@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= typeof title !== 'undefined' && title ? `${title} · ${schoolName}` : schoolName %></title>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : `${schoolName} — ${site.settings.tagline || 'Peace · Love · Service'}` %>">
+  <meta name="theme-color" content="#c8141b">
+  <link rel="icon" type="image/png" href="/img/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+  <% if (typeof extraCss !== 'undefined') { extraCss.forEach(function (href) { %><link rel="stylesheet" href="<%= href %>"><% }) } %>
+  <link rel="stylesheet" href="/css/site.css">
+</head>

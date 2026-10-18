@@ -1,0 +1,29 @@
+<%- include('_top') %>
+<div class="page-head">
+  <div>
+    <h1>Hiring banner</h1>
+    <p>A strip shown at the very top of every page. Turn it on when the school is recruiting.</p>
+  </div>
+</div>
+<section class="card">
+  <form class="form" method="post" action="/admin/hiring">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label class="check"><input type="checkbox" name="visible" <% if (h.visible) { %>checked<% } %>> Show hiring banner on the website</label>
+    <div class="field">
+      <label for="text">Message</label>
+      <textarea id="text" name="text" style="min-height:90px"><%= h.text || '' %></textarea>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="link_url">Link (optional)</label>
+        <input id="link_url" name="link_url" type="text" value="<%= h.link_url || '' %>" placeholder="https://… or /contact">
+      </div>
+      <div class="field">
+        <label for="link_label">Link text</label>
+        <input id="link_label" name="link_label" type="text" value="<%= h.link_label || 'Apply now' %>">
+      </div>
+    </div>
+    <div class="form-actions"><button class="btn" type="submit">Save banner</button></div>
+  </form>
+</section>
+<%- include('_bottom') %>

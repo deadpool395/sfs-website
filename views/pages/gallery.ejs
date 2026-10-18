@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/page-hero', { eyebrow: 'Gallery', heading: 'Moments worth keeping', intro: 'Celebrations, classrooms, sports days and everyday joys from life at our school.' }) %>
+
+<section class="section">
+  <div class="container">
+    <% if (!images.length) { %>
+      <div class="empty"><%- icon('image') %><p>Photos will appear here soon.</p></div>
+    <% } else { %>
+      <% if (albums.length > 1) { %>
+        <div class="filter-bar" role="group" aria-label="Filter by album">
+          <button class="chip" type="button" data-filter="*" aria-pressed="true">All photos</button>
+          <% albums.forEach((a) => { %>
+            <button class="chip" type="button" data-filter="<%= a %>" aria-pressed="false"><%= a %></button>
+          <% }) %>
+        </div>
+      <% } %>
+      <div class="masonry" data-gallery>
+        <% images.forEach((img) => { %>
+          <button class="masonry-item" type="button" data-album="<%= img.album %>" data-full="<%= mediaUrl(img.media_id) %>" data-caption="<%= img.caption %>">
+            <img src="<%= mediaUrl(img.media_id, 'thumb') %>" alt="<%= img.caption || 'School photo' %>" loading="lazy">
+            <div class="media-tint"></div>
+            <% if (img.caption) { %><figcaption><%= img.caption %></figcaption><% } %>
+          </button>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<div class="modal" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="modal-inner" style="text-align:center">
+    <button class="icon-btn modal-close" type="button" data-modal-close aria-label="Close photo"><%- icon('close') %></button>
+    <img class="lightbox-img" alt="">
+    <p class="lightbox-caption"></p>
+    <button class="icon-btn lightbox-nav lightbox-prev" type="button" aria-label="Previous photo"><%- icon('chevronLeft') %></button>
+    <button class="icon-btn lightbox-nav lightbox-next" type="button" aria-label="Next photo"><%- icon('chevronRight') %></button>
+  </div>
+</div>
+
+<%- include('../partials/footer', { extraJs: ['/js/gallery.js'] }) %>

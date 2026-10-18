@@ -1,0 +1,9 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/page-hero', { eyebrow: `Error ${code}`, heading: title, intro: message }) %>
+<section class="section">
+  <div class="container" style="text-align:center">
+    <a class="btn" href="/"><%- icon('arrow') %>Back to home</a>
+  </div>
+</section>
+<%- include('../partials/footer') %>

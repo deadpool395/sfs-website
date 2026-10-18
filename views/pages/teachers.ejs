@@ -1,0 +1,48 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/page-hero', { eyebrow: "Teachers' Corner", heading: 'Meet our faculty', intro: 'Dedicated educators and staff who make learning at our school a joyful journey.' }) %>
+
+<section class="section">
+  <div class="container">
+    <% if (!staff.length) { %>
+      <div class="empty"><%- icon('users') %><p>Staff profiles will be added soon.</p></div>
+    <% } else { %>
+      <div class="filter-bar" style="align-items:center; justify-content: space-between">
+        <input class="search-input" type="search" placeholder="Search by name or subject" aria-label="Search staff" data-staff-search>
+        <% if (departments.length > 1) { %>
+          <div class="filter-bar" role="group" aria-label="Filter by department" style="margin:0">
+            <button class="chip" type="button" data-dept="*" aria-pressed="true">All</button>
+            <% departments.forEach((d) => { %><button class="chip" type="button" data-dept="<%= d %>" aria-pressed="false"><%= d %></button><% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <% departments.forEach((d) => { const members = staff.filter((s) => s.department === d); %>
+        <section data-dept-group="<%= d %>">
+          <h2 class="dept-title"><%= d %> <small><%= members.length %></small></h2>
+          <div class="staff-grid">
+            <% members.forEach((s) => { %>
+              <article class="staff-card" data-search="<%= [s.name, s.designation, s.qualification, s.department].join(' ').toLowerCase() %>">
+                <div class="portrait">
+                  <% if (s.media_id) { %>
+                    <img src="<%= mediaUrl(s.media_id, 'thumb') %>" alt="<%= s.name %>" loading="lazy">
+                  <% } else { %>
+                    <span class="placeholder"><%= initials(s.name) %></span>
+                  <% } %>
+                </div>
+                <div class="info">
+                  <h3><%= s.name %></h3>
+                  <% if (s.designation) { %><div class="role"><%= s.designation %></div><% } %>
+                  <% if (s.qualification) { %><div class="qual"><%= s.qualification %></div><% } %>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        </section>
+      <% }) %>
+      <p class="empty" data-staff-empty hidden>No staff match your search.</p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer', { extraJs: ['/js/teachers.js'] }) %>

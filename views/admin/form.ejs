@@ -1,0 +1,63 @@
+<%- include('_top') %>
+<% const hasFile = cfg.fields.some((f) => f.type === 'image' || f.type === 'pdf'); %>
+<div class="page-head">
+  <div>
+    <h1><%= title %></h1>
+    <p><a href="<%= base %>">← Back to <%= cfg.title %></a></p>
+  </div>
+</div>
+
+<section class="card">
+  <form class="form" method="post" action="<%= isNew ? base : `${base}/${item.id}` %>" <% if (hasFile) { %>enctype="multipart/form-data"<% } %>>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <% cfg.fields.forEach((f) => { const v = item[f.name]; const id = 'f_' + f.name; %>
+      <% if (f.type === 'checkbox') { %>
+        <label class="check"><input type="checkbox" name="<%= f.name %>" <% if (v) { %>checked<% } %>> <%= f.label %></label>
+      <% } else if (f.type === 'image' || f.type === 'pdf') { %>
+        <div class="field">
+          <span class="label"><%= f.label %><% if (f.required) { %> *<% } %></span>
+          <% if (item.media_id) { %>
+            <div class="current-file">
+              <% if (f.type === 'image') { %>
+                <img src="<%= mediaUrl(item.media_id, 'thumb') %>" alt="Current image">
+              <% } else { %>
+                <a class="btn btn-sm btn-secondary" href="<%= mediaUrl(item.media_id) %>" target="_blank" rel="noopener"><%- icon('file') %>Current PDF</a>
+              <% } %>
+              <% if (!f.required) { %><label class="check"><input type="checkbox" name="remove_file"> Remove</label><% } %>
+            </div>
+          <% } %>
+          <label class="dropzone" data-free="<%= storage.freeBytes %>">
+            <input type="file" name="<%= f.name %>" accept="<%= f.type === 'pdf' ? 'application/pdf' : 'image/*' %>" <% if (f.required && !item.media_id) { %>required<% } %>>
+            <%- icon(f.type === 'pdf' ? 'file' : 'image') %>
+            <span><%= item.media_id ? 'Choose a new file to replace it' : 'Drop a file here or browse' %></span>
+            <span class="picked"></span>
+            <span class="free-space"><%= formatBytes(storage.freeBytes) %> storage free<%= f.type === 'image' ? ' · photos are compressed automatically' : ' · PDFs up to 40 MB' %></span>
+          </label>
+        </div>
+      <% } else { %>
+        <div class="field">
+          <label for="<%= id %>"><%= f.label %><% if (f.required) { %> *<% } %></label>
+          <% if (f.type === 'textarea') { %>
+            <textarea id="<%= id %>" name="<%= f.name %>" <% if (f.required) { %>required<% } %>><%= v || '' %></textarea>
+          <% } else if (f.type === 'select') { %>
+            <select id="<%= id %>" name="<%= f.name %>"><% f.options.forEach((o) => { %><option <% if (o === v) { %>selected<% } %>><%= o %></option><% }) %></select>
+          <% } else if (f.type === 'datetime') { %>
+            <input id="<%= id %>" name="<%= f.name %>" type="datetime-local" value="<%= v ? toInputDate(v) : (f.required ? toInputDate(new Date()) : '') %>" <% if (f.required) { %>required<% } %>>
+          <% } else if (f.type === 'number') { %>
+            <input id="<%= id %>" name="<%= f.name %>" type="number" value="<%= v ?? 0 %>">
+          <% } else if (f.type === 'youtube') { %>
+            <input id="<%= id %>" name="<%= f.name %>" type="text" value="<%= v ? 'https://youtu.be/' + v : '' %>" placeholder="https://www.youtube.com/watch?v=…" required>
+          <% } else { %>
+            <input id="<%= id %>" name="<%= f.name %>" type="text" value="<%= v || '' %>" <% if (f.type === 'url') { %>placeholder="https://…" inputmode="url"<% } %> <% if (f.required) { %>required<% } %>>
+          <% } %>
+          <% if (f.help) { %><div class="help"><%= f.help %></div><% } %>
+        </div>
+      <% } %>
+    <% }) %>
+    <div class="form-actions">
+      <button class="btn" type="submit" <% if (hasFile) { %>data-busy="Saving…"<% } %>><%= isNew ? `Add ${cfg.singular.toLowerCase()}` : 'Save changes' %></button>
+      <a class="btn btn-secondary" href="<%= base %>">Cancel</a>
+    </div>
+  </form>
+</section>
+<%- include('_bottom') %>

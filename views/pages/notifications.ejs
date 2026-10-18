@@ -1,0 +1,39 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%- include('../partials/page-hero', { eyebrow: 'Notice board', heading: 'Notifications', intro: 'Announcements, circulars and updates for students, parents and staff.' }) %>
+
+<section class="section">
+  <div class="container" style="max-width: 920px">
+    <% if (!notices.length) { %>
+      <div class="empty"><%- icon('bell') %><p>No notifications right now. Please check back soon.</p></div>
+    <% } else { %>
+      <div class="notice-list">
+        <% notices.forEach((n) => { %>
+          <article class="notice <%= n.media_id ? 'has-image' : '' %>" id="n-<%= n.id %>">
+            <% if (n.media_id) { %>
+              <a class="notice-img" href="<%= mediaUrl(n.media_id) %>" target="_blank" rel="noopener" aria-label="Open image for <%= n.title %>">
+                <img src="<%= mediaUrl(n.media_id, 'thumb') %>" alt="" loading="lazy">
+                <div class="media-tint" style="opacity:.5"></div>
+              </a>
+            <% } %>
+            <div>
+              <div class="meta">
+                <% if (n.pinned) { %><span class="tag"><%- icon('pin') %> Pinned</span><% } %>
+                <span><%= fmtDate(n.published_at, { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }) %></span>
+              </div>
+              <h3><%= n.title %></h3>
+              <% if (n.body) { %><div class="body"><%= n.body %></div><% } %>
+              <% if (n.link_url) { %>
+                <p style="margin: var(--s-4) 0 0">
+                  <a class="btn btn-sm btn-royal" href="<%= n.link_url %>" <% if (isExternal(n.link_url)) { %>target="_blank" rel="noopener"<% } %>><%= n.link_label || 'Read more' %> <%- icon(isExternal(n.link_url) ? 'external' : 'arrow') %></a>
+                </p>
+              <% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

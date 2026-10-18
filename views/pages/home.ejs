@@ -1,0 +1,181 @@
+<%- include('../partials/head', { extraCss: slides.length ? ['/vendor/swiper/swiper-bundle.min.css'] : [] }) %>
+<%- include('../partials/header') %>
+<%
+  const hero = site.settings.hero || {};
+  const ql = site.quickLinks;
+  const pm = site.settings.principal_message || {};
+  const quick = [
+    { l: ql.parent_login, icon: 'users', sub: 'Parent portal' },
+    { l: ql.staff_login, icon: 'user', sub: 'Staff portal' },
+    { l: ql.fee_payment, icon: 'card', sub: 'Pay school fees online' },
+    { l: ql.academic_calendar, icon: 'calendar', sub: 'Read the year at a glance' },
+  ].filter((q) => q.l && q.l.visible);
+%>
+
+<section class="hero" aria-label="Welcome">
+  <% if (background) { %>
+    <div class="hero-media" data-hero-video="<%= background.youtube_id %>"></div>
+  <% } %>
+  <img class="hero-crest" src="/img/logo-mark.png" alt="">
+  <div class="container hero-content">
+    <span class="eyebrow"><%= schoolName %></span>
+    <h1><%- emph(hero.heading || 'Where young minds grow in *peace, love and service*') %></h1>
+    <% if (hero.subheading) { %><p class="lead"><%= hero.subheading %></p><% } %>
+    <div class="hero-actions">
+      <a class="btn btn-gold" href="/notifications"><%- icon('megaphone') %>Latest notices</a>
+      <a class="btn btn-glass" href="/gallery"><%- icon('image') %>Explore gallery</a>
+      <% if (background) { %>
+        <button class="btn btn-glass" type="button" data-video="<%= background.youtube_id %>" data-title="<%= background.title %>"><%- icon('play') %>Watch film</button>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<% if (quick.length) { %>
+<div class="container">
+  <div class="quick-grid">
+    <% quick.forEach((q) => { %>
+      <a class="quick-card" href="<%= q.l.url %>" <% if (isExternal(q.l.url)) { %>target="_blank" rel="noopener"<% } %>>
+        <span class="qi"><%- icon(q.icon) %></span>
+        <span class="qt"><strong><%= q.l.label %></strong><small><%= q.sub %></small></span>
+      </a>
+    <% }) %>
+  </div>
+</div>
+<% } %>
+
+<% if (slides.length) { %>
+<section class="section" aria-labelledby="moments-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Campus life</span>
+        <h2 id="moments-title">Moments from our school</h2>
+      </div>
+      <a class="link-arrow" href="/gallery">View full gallery <%- icon('arrow') %></a>
+    </div>
+    <div class="carousel swiper reveal" data-carousel>
+      <div class="swiper-wrapper">
+        <% slides.forEach((s, i) => { %>
+          <div class="swiper-slide">
+            <img src="<%= mediaUrl(s.media_id) %>" alt="<%= s.title || 'School photo' %>" <% if (i > 0) { %>loading="lazy"<% } %>>
+            <div class="media-tint"></div>
+            <div class="media-fade"></div>
+            <% if (s.title || s.caption) { %>
+              <div class="slide-caption">
+                <% if (s.title) { %><h3><%= s.title %></h3><% } %>
+                <% if (s.caption) { %><p><%= s.caption %><% if (s.link_url) { %> <a href="<%= s.link_url %>" <% if (isExternal(s.link_url)) { %>target="_blank" rel="noopener"<% } %>>Learn more →</a><% } %></p><% } %>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev" aria-label="Previous slide"></div>
+      <div class="swiper-button-next" aria-label="Next slide"></div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (videos.length) { %>
+<section class="section section-alt" aria-labelledby="videos-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Watch</span>
+        <h2 id="videos-title">Stories in motion</h2>
+      </div>
+    </div>
+    <div class="video-grid">
+      <% videos.forEach((v) => { %>
+        <button class="video-card reveal" type="button" data-video="<%= v.youtube_id %>" data-title="<%= v.title %>">
+          <div class="video-thumb">
+            <img src="https://i.ytimg.com/vi/<%= v.youtube_id %>/hqdefault.jpg" alt="" loading="lazy">
+            <div class="media-tint"></div>
+            <div class="media-fade"></div>
+            <span class="play-badge"><%- icon('play') %></span>
+          </div>
+          <% if (v.title) { %><h3><%= v.title %></h3><% } %>
+          <% if (v.caption) { %><p><%= v.caption %></p><% } %>
+        </button>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="section" aria-labelledby="notices-title">
+  <div class="container split">
+    <div class="reveal">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Notice board</span>
+          <h2 id="notices-title">What's happening</h2>
+        </div>
+        <a class="link-arrow" href="/notifications">All notices <%- icon('arrow') %></a>
+      </div>
+      <% if (!notices.length) { %>
+        <div class="empty"><%- icon('bell') %><p>No notices at the moment. Please check back soon.</p></div>
+      <% } else { %>
+        <% notices.forEach((n) => { const d = dateParts(n.published_at); %>
+          <a class="notice-compact" href="/notifications#n-<%= n.id %>">
+            <span class="date-chip"><b><%= d.day %></b><span><%= d.month %></span></span>
+            <span>
+              <h3><% if (n.pinned) { %><span class="tag" style="margin-right:6px">Pinned</span><% } %><%= n.title %></h3>
+              <% if (n.body) { %><p><%= n.body %></p><% } %>
+            </span>
+          </a>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <aside class="panel principal-card reveal" aria-label="Message from the principal">
+      <span class="eyebrow">Principal's message</span>
+      <h2><%= pm.heading || "From the Principal's desk" %></h2>
+      <blockquote><%= pm.body || (principal && principal.bio) || 'At St. Francis School we nurture every child to grow in knowledge, character and compassion — living out our motto of Peace, Love and Service each day.' %></blockquote>
+      <% if (principal) { %>
+        <div class="principal-sign">
+          <% if (principal.media_id) { %>
+            <img src="<%= mediaUrl(principal.media_id, 'thumb') %>" alt="<%= principal.name %>" loading="lazy">
+          <% } else { %>
+            <span class="avatar-fallback"><%= initials(principal.name) %></span>
+          <% } %>
+          <span><strong><%= principal.name %></strong><span><%= principal.designation %></span></span>
+        </div>
+      <% } %>
+      <a class="link-arrow" href="/principals">Principal's Corner <%- icon('arrow') %></a>
+    </aside>
+  </div>
+</section>
+
+<% if (gallery.length) { %>
+<section class="section section-alt" aria-labelledby="gallery-title">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Gallery</span>
+        <h2 id="gallery-title">Life at St. Francis</h2>
+      </div>
+      <a class="link-arrow" href="/gallery">See all photos <%- icon('arrow') %></a>
+    </div>
+    <div class="mini-gallery reveal">
+      <% gallery.slice(0, 5).forEach((g, i) => { %>
+        <a href="/gallery" aria-label="<%= g.caption || 'Open gallery' %>">
+          <img src="<%= mediaUrl(g.media_id, i === 0 ? null : 'thumb') %>" alt="<%= g.caption %>" loading="lazy">
+          <div class="media-tint"></div>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<div class="modal" id="video-modal" role="dialog" aria-modal="true" aria-label="Video player">
+  <div class="modal-inner">
+    <button class="icon-btn modal-close" type="button" data-modal-close aria-label="Close video"><%- icon('close') %></button>
+    <div class="modal-frame"></div>
+  </div>
+</div>
+
+<%- include('../partials/footer', { extraJs: slides.length ? ['/vendor/swiper/swiper-bundle.min.js', '/js/home.js'] : ['/js/home.js'] }) %>

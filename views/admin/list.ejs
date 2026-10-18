@@ -1,0 +1,80 @@
+<%- include('_top') %>
+<%
+  const L = cfg.list;
+  const toggleField = cfg.toggleField || 'visible';
+  const badgeLabels = { is_background: 'Background', pinned: 'Pinned', is_current: 'Current' };
+%>
+<div class="page-head">
+  <div>
+    <h1><%= cfg.title %></h1>
+    <% if (cfg.help) { %><p><%= cfg.help %></p><% } %>
+  </div>
+  <a class="btn" href="<%= base %>/new"><%- icon('plus') %>Add <%= cfg.singular.toLowerCase() %></a>
+</div>
+
+<% if (cfg.bulkUpload) { %>
+  <section class="card">
+    <h2>Upload many photos at once</h2>
+    <form class="form" method="post" action="<%= base %>/bulk" enctype="multipart/form-data" style="max-width:none">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-row">
+        <label class="dropzone" data-free="<%= storage.freeBytes %>">
+          <input type="file" name="photos" accept="image/*" multiple required>
+          <%- icon('image') %>
+          <span>Drop photos here or <u>browse</u> (up to 30 at a time)</span>
+          <span class="picked"></span>
+          <span class="free-space"><%= formatBytes(storage.freeBytes) %> storage free · photos are compressed automatically</span>
+        </label>
+        <div class="field">
+          <label for="album">Album</label>
+          <input id="album" name="album" type="text" value="General" list="albums">
+          <div class="help">Group photos by event, e.g. “Annual Day 2026”.</div>
+          <div class="form-actions" style="margin-top: var(--s-4)"><button class="btn btn-royal" type="submit" data-busy="Uploading & compressing…"><%- icon('plus') %>Upload photos</button></div>
+        </div>
+      </div>
+      <datalist id="albums"><% [...new Set(rows.map((r) => r.album))].forEach((a) => { %><option value="<%= a %>"><% }) %></datalist>
+    </form>
+  </section>
+<% } %>
+
+<% if (!rows.length) { %>
+  <div class="empty">Nothing here yet. <a href="<%= base %>/new">Add the first <%= cfg.singular.toLowerCase() %></a>.</div>
+<% } else { %>
+  <div class="item-list">
+    <% rows.forEach((r) => { const hidden = r.visible === false; %>
+      <div class="item <%= L.thumb ? '' : 'no-thumb' %> <%= hidden ? 'is-hidden' : '' %>">
+        <% if (L.thumb === 'youtube') { %>
+          <img class="thumb" src="https://i.ytimg.com/vi/<%= r.youtube_id %>/mqdefault.jpg" alt="" loading="lazy">
+        <% } else if (L.thumb === 'image') { %>
+          <% if (r.media_id) { %><img class="thumb" src="<%= mediaUrl(r.media_id, 'thumb') %>" alt="" loading="lazy"><% } else { %><span class="thumb"><%- icon('image') %></span><% } %>
+        <% } else if (L.thumb === 'pdf') { %>
+          <a class="thumb" href="<%= mediaUrl(r.media_id) %>" target="_blank" rel="noopener" aria-label="Open PDF"><%- icon('file') %></a>
+        <% } %>
+        <div style="min-width:0">
+          <strong>
+            <%= r[L.primary] || '(untitled)' %>
+            <% (L.badges || []).forEach((b) => { if (r[b]) { %><span class="badge"><%= badgeLabels[b] %></span><% } }) %>
+            <% if (hidden) { %><span class="badge badge-muted">Hidden</span><% } %>
+          </strong>
+          <div class="sub">
+            <%= [r[L.secondary], L.tertiary ? r[L.tertiary] : null, L.date ? fmtDate(r[L.date]) : null].filter(Boolean).join(' · ') %>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-sm btn-secondary" href="<%= base %>/<%= r.id %>/edit"><%- icon('edit') %>Edit</a>
+          <% if (toggleField === 'visible') { %>
+            <form method="post" action="<%= base %>/<%= r.id %>/toggle">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-sm btn-secondary" type="submit" title="<%= hidden ? 'Show on website' : 'Hide from website' %>"><%- icon(hidden ? 'eye' : 'eyeOff') %><%= hidden ? 'Show' : 'Hide' %></button>
+            </form>
+          <% } %>
+          <form method="post" action="<%= base %>/<%= r.id %>/delete" data-confirm="Delete this <%= cfg.singular.toLowerCase() %>? This cannot be undone.">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-sm btn-danger btn-icon" type="submit" aria-label="Delete"><%- icon('trash') %></button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+<%- include('_bottom') %>

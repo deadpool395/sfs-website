@@ -1,0 +1,133 @@
+<%
+  const ql = site.quickLinks;
+  const hiring = site.settings.hiring || {};
+  const portals = ['parent_login', 'staff_login', 'fee_payment'].map((k) => ql[k]).filter((l) => l && l.visible);
+  const portalIcon = { parent_login: 'users', staff_login: 'user', fee_payment: 'card' };
+  const portalClass = { parent_login: 'btn-royal', staff_login: 'btn-ghost', fee_payment: '' };
+  const nav = [
+    { href: '/', label: 'Home' },
+    { href: '/principals', label: "Principal's Corner" },
+    { href: '/teachers', label: "Teachers' Corner" },
+    { href: '/gallery', label: 'Gallery' },
+    ql.academic_calendar && ql.academic_calendar.visible ? { href: ql.academic_calendar.url, label: 'Calendar' } : null,
+    { href: '/notifications', label: 'Notices' },
+    { href: '/contact', label: 'Contact' },
+  ].filter(Boolean);
+  const isCurrent = (href) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
+  const bellList = typeof bell !== 'undefined' && bell ? bell : [];
+  const latestNotice = bellList[0] ? new Date(bellList[0].published_at).getTime() : 0;
+%>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<% if (hiring.visible && hiring.text) { %>
+<div class="hiring-bar" data-hiring="<%= hiring.text.length %>-<%= hiring.text.slice(0, 24) %>">
+  <div class="container">
+    <span class="pill">We're hiring</span>
+    <p><%= hiring.text %>
+      <% if (hiring.link_url) { %>
+        <a class="hiring-link" href="<%= hiring.link_url %>" <% if (isExternal(hiring.link_url)) { %>target="_blank" rel="noopener"<% } %>><%= hiring.link_label || 'Learn more' %> →</a>
+      <% } %>
+    </p>
+    <button class="icon-btn" type="button" data-dismiss-hiring aria-label="Dismiss hiring announcement"><%- icon('close') %></button>
+  </div>
+</div>
+<% } %>
+
+<div class="topbar">
+  <div class="container">
+    <span class="topbar-motto"><%= site.settings.tagline || 'Peace · Love · Service' %></span>
+    <% if (portals.length) { %>
+    <div class="header-portals">
+      <% portals.forEach((l) => { %>
+        <a class="btn btn-sm <%= portalClass[l.key] %>" href="<%= l.url %>" target="_blank" rel="noopener"><%- icon(portalIcon[l.key]) %><%= l.label %></a>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href="/" aria-label="<%= schoolName %> — home">
+      <img src="/img/logo-mark.png" alt="" width="52" height="52">
+      <span class="brand-text">
+        <span class="brand-name"><%= schoolName %></span>
+        <span class="brand-tag"><%= site.settings.tagline || 'Peace · Love · Service' %></span>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <% nav.forEach((item) => { %>
+          <li><a href="<%= item.href %>" <% if (isCurrent(item.href)) { %>aria-current="page"<% } %>><%= item.label %></a></li>
+        <% }) %>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" type="button" data-open="bell-drawer" aria-label="Notifications" data-latest="<%= latestNotice %>">
+        <%- icon('bell') %>
+        <span class="bell-count" hidden></span>
+      </button>
+      <button class="icon-btn menu-toggle" type="button" data-open="nav-drawer" aria-label="Open menu"><%- icon('menu') %></button>
+    </div>
+  </div>
+</header>
+
+<% if (portals.length) { %>
+<div class="portal-strip">
+  <div class="container">
+    <% portals.forEach((l) => { %>
+      <a class="btn btn-sm <%= portalClass[l.key] %>" href="<%= l.url %>" target="_blank" rel="noopener"><%- icon(portalIcon[l.key]) %><%= l.label %></a>
+    <% }) %>
+  </div>
+</div>
+<% } %>
+
+<div class="scrim" data-scrim></div>
+
+<aside class="drawer" id="nav-drawer" aria-label="Menu" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Menu</h2>
+    <button class="icon-btn" type="button" data-close aria-label="Close menu"><%- icon('close') %></button>
+  </div>
+  <div class="drawer-body">
+    <ul class="drawer-nav">
+      <% nav.forEach((item) => { %>
+        <li><a href="<%= item.href %>" <% if (isCurrent(item.href)) { %>aria-current="page"<% } %>><%= item.label %> <%- icon('chevronRight') %></a></li>
+      <% }) %>
+    </ul>
+    <div class="drawer-portals">
+      <% portals.forEach((l) => { %>
+        <a class="btn <%= portalClass[l.key] %>" href="<%= l.url %>" target="_blank" rel="noopener"><%- icon(portalIcon[l.key]) %><%= l.label %></a>
+      <% }) %>
+    </div>
+  </div>
+</aside>
+
+<aside class="drawer" id="bell-drawer" aria-label="Latest notifications" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Notifications</h2>
+    <button class="icon-btn" type="button" data-close aria-label="Close notifications"><%- icon('close') %></button>
+  </div>
+  <div class="drawer-body">
+    <% if (!bellList.length) { %>
+      <div class="empty"><%- icon('bell') %><p>No notifications right now.</p></div>
+    <% } else { %>
+      <% bellList.forEach((n) => { %>
+        <article class="bell-item <%= n.media_id ? '' : 'no-thumb' %>" data-published="<%= new Date(n.published_at).getTime() %>">
+          <% if (n.media_id) { %><img src="<%= mediaUrl(n.media_id, 'thumb') %>" alt="" loading="lazy"><% } %>
+          <div>
+            <h3><a href="/notifications#n-<%= n.id %>" style="color:inherit;text-decoration:none"><%= n.title %></a></h3>
+            <% if (n.body) { %><p><%= n.body %></p><% } %>
+            <div class="meta"><%= fmtDate(n.published_at) %><% if (n.pinned) { %> · Pinned<% } %></div>
+          </div>
+        </article>
+      <% }) %>
+      <p style="margin-top: var(--s-5)"><a class="btn btn-ghost" href="/notifications">View all notifications <%- icon('arrow') %></a></p>
+    <% } %>
+  </div>
+</aside>
+
+<main id="main">

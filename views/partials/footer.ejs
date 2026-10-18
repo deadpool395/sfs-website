@@ -1,0 +1,52 @@
+<%
+  const fql = site.quickLinks;
+  const contact = site.settings.contact || {};
+  const footerPortals = ['parent_login', 'staff_login', 'fee_payment', 'academic_calendar'].map((k) => fql[k]).filter((l) => l && l.visible);
+%>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="/img/logo-mark.png" alt="" width="64" height="64" loading="lazy">
+          <div>
+            <strong><%= schoolName %></strong>
+            <span><%= site.settings.tagline || 'Peace · Love · Service' %></span>
+          </div>
+        </div>
+        <% if (contact.address) { %><p style="white-space: pre-line"><%= contact.address %></p><% } %>
+        <% if (contact.phones) { %><p style="margin:0"><%= contact.phones %></p><% } %>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <ul class="footer-links">
+          <li><a href="/principals">Principal's Corner</a></li>
+          <li><a href="/teachers">Teachers' Corner</a></li>
+          <li><a href="/gallery">Gallery</a></li>
+          <li><a href="/notifications">Notifications</a></li>
+          <li><a href="/contact">Contact us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Quick access</h3>
+        <ul class="footer-links">
+          <% footerPortals.forEach((l) => { %>
+            <li><a href="<%= l.url %>" <% if (isExternal(l.url)) { %>target="_blank" rel="noopener"<% } %>><%= l.label %></a></li>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <%= new Date().getFullYear() %> <%= schoolName %>. All rights reserved.</span>
+      <span class="powered">Powered by <a href="https://personal-website-w63n.onrender.com" target="_blank" rel="noopener">Dani - Alumnus of St. Francis School</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/site.js" defer></script>
+<% if (typeof extraJs !== 'undefined') { extraJs.forEach(function (src) { %><script src="<%= src %>" defer></script><% }) } %>
+<% if (typeof extraModules !== 'undefined') { extraModules.forEach(function (src) { %><script type="module" src="<%= src %>"></script><% }) } %>
+</body>
+</html>

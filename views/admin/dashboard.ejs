@@ -1,0 +1,31 @@
+<%- include('_top') %>
+<div class="page-head">
+  <div>
+    <h1>Welcome back, <%= adminName %></h1>
+    <p>Manage everything on the <%= schoolName %> website from here.</p>
+  </div>
+  <a class="btn btn-secondary" href="/" target="_blank" rel="noopener"><%- icon('external') %>View website</a>
+</div>
+
+<%- include('_storage-card', { showLink: true }) %>
+
+<div class="grid grid-stats">
+  <a class="stat" href="/admin/notifications"><b><%= counts.notifications %></b><span>Active notifications</span></a>
+  <a class="stat" href="/admin/gallery"><b><%= counts.gallery %></b><span>Gallery photos</span></a>
+  <a class="stat" href="/admin/slides"><b><%= counts.slides %></b><span>Slideshow photos</span></a>
+  <a class="stat" href="/admin/videos"><b><%= counts.videos %></b><span>YouTube videos</span></a>
+  <a class="stat" href="/admin/calendars"><b><%= counts.calendars %></b><span>Calendars</span></a>
+  <a class="stat" href="/admin/principals"><b><%= counts.principals %></b><span>Principals</span></a>
+  <a class="stat" href="/admin/staff"><b><%= counts.staff %></b><span>Staff on website</span></a>
+</div>
+
+<section class="card" style="margin-top: var(--s-5)">
+  <h2>Quick actions</h2>
+  <div class="form-actions">
+    <a class="btn" href="/admin/notifications/new"><%- icon('plus') %>New notification</a>
+    <a class="btn btn-royal" href="/admin/gallery"><%- icon('image') %>Upload photos</a>
+    <a class="btn btn-secondary" href="/admin/hiring"><%- icon('megaphone') %>Hiring banner</a>
+    <a class="btn btn-secondary" href="/admin/calendars/new"><%- icon('calendar') %>Upload calendar</a>
+  </div>
+</section>
+<%- include('_bottom') %>

@@ -1,0 +1,6 @@
+node_modules/
+.env
+temporary screenshots/
+*.log
+admin-cred.txt
+*.tmp.*

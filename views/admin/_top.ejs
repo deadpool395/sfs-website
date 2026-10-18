@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title><%= title %> · Admin · <%= schoolName %></title>
+  <link rel="icon" type="image/png" href="/img/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400..800;1,400..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<%
+  const navGroups = [
+    { title: 'Overview', items: [
+      { href: '/admin', label: 'Dashboard', icon: 'dashboard', exact: true },
+      { href: '/admin/storage', label: 'Storage', icon: 'database' },
+    ]},
+    { title: 'Home page', items: [
+      { href: '/admin/hiring', label: 'Hiring banner', icon: 'megaphone' },
+      { href: '/admin/videos', label: 'YouTube videos', icon: 'video' },
+      { href: '/admin/slides', label: 'Photo slideshow', icon: 'slides' },
+      { href: '/admin/links', label: 'Buttons & links', icon: 'link' },
+    ]},
+    { title: 'Content', items: [
+      { href: '/admin/notifications', label: 'Notifications', icon: 'bell' },
+      { href: '/admin/gallery', label: 'Gallery', icon: 'image' },
+      { href: '/admin/calendars', label: 'Academic calendar', icon: 'calendar' },
+      { href: '/admin/principals', label: "Principal's Corner", icon: 'user' },
+      { href: '/admin/staff', label: "Teachers' Corner", icon: 'users' },
+    ]},
+    { title: 'Site', items: [
+      { href: '/admin/settings', label: 'School & home text', icon: 'settings' },
+      { href: '/admin/contact', label: 'Contact page', icon: 'phone' },
+      { href: '/admin/password', label: 'Change password', icon: 'key' },
+    ]},
+  ];
+  const active = (it) => (it.exact ? currentPath === '/admin' || currentPath === '/admin/' : currentPath.startsWith(it.href));
+%>
+<div class="admin">
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <img src="/img/logo-mark.png" alt="">
+      <div><strong><%= schoolName %></strong><span>Admin panel</span></div>
+      <button class="icon-btn nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false" data-nav-toggle><%- icon('menu') %></button>
+    </div>
+    <nav class="side-nav" data-side-nav aria-label="Admin">
+      <% navGroups.forEach((g) => { %>
+        <h4><%= g.title %></h4>
+        <% g.items.forEach((it) => { %>
+          <a href="<%= it.href %>" <% if (active(it)) { %>aria-current="page"<% } %>><%- icon(it.icon) %><%= it.label %></a>
+        <% }) %>
+      <% }) %>
+      <h4>Account</h4>
+      <a href="/" target="_blank" rel="noopener"><%- icon('external') %>View website</a>
+      <form method="post" action="/admin/logout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit"><%- icon('logout') %>Sign out (<%= adminName %>)</button>
+      </form>
+      <a class="side-storage" href="/admin/storage" style="display:block; color: inherit">
+        <div style="display:flex;justify-content:space-between"><span>Storage</span><b><%= storage.pct.toFixed(1) %>%</b></div>
+        <div class="meter <%= storage.level %>"><span style="transform: scaleX(<%= Math.max(0.01, storage.pct / 100) %>)"></span></div>
+        <span><%= formatBytes(storage.freeBytes) %> free of <%= formatBytes(storage.limitBytes) %></span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <% if (storage.level !== 'ok') { %>
+      <div class="alert <%= storage.level === 'critical' ? 'alert-error' : 'alert-warning' %>" role="status">
+        <%- icon('database') %>
+        <span>
+          <% if (storage.level === 'critical') { %>
+            Storage almost full — <%= storage.pct.toFixed(0) %>% used, only <%= formatBytes(storage.freeBytes) %> left. Uploads stop at <%= storagePcts.block %>%. Delete old photos or PDFs, or raise the limit.
+          <% } else { %>
+            Storage getting full — <%= storage.pct.toFixed(0) %>% used (<%= formatBytes(storage.freeBytes) %> free).
+          <% } %>
+          <a href="/admin/storage">Manage storage →</a>
+        </span>
+      </div>
+    <% } %>
+    <% if (flash) { %>
+      <div class="alert alert-<%= flash.type === 'error' ? 'error' : 'success' %>" role="status"><%- icon(flash.type === 'error' ? 'close' : 'star') %><span><%= flash.message %></span></div>
+    <% } %>
